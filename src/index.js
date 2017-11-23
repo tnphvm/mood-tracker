@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './css/index.css';
 import registerServiceWorker from './registerServiceWorker';
 import {Redirect, browserHistory, Route, Router} from "react-router";
-import Login from './login';
-import App from './App';
+import LoginContainer from './container/LoginContainer';
+import App from './component/App';
 
 const Root = () => (
   <Router history={browserHistory}>
      <div>
-        <Route path="/login" component={Login}/>
+        <Route path="/login" component={LoginContainer}/>
         <Route path="/app/home" component={App}/>
         <Redirect from="/" to="/login"/>
      </div>

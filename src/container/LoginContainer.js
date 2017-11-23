@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import './css/login.css';
-import { loginWithGoogle } from "./helpers/auth";
-import { firebaseAuth } from "./config/firebaseConfig";
+import { loginWithGoogle } from "../helpers/auth";
+import { firebaseAuth } from "../config/firebaseConfig";
+import { Login } from '../component/Login'
 
 const firebaseAuthKey = "firebaseAuthInProgress";
 const appTokenKey = "appToken";
 
-export default class Login extends Component {
+export default class LoginContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,25 +53,8 @@ export default class Login extends Component {
     if (localStorage.getItem(firebaseAuthKey) == '1')
       return (<SplashScreen />);
 
-    return (<LoginPage handleGoogleLogin={this.handleGoogleLogin} />);
+    return (<Login handleGoogleLogin={this.handleGoogleLogin} />);
   }
 }
 
 const SplashScreen = () => (<p>Loading...</p>);
-const LoginPage = ({handleGoogleLogin}) => (
-  <div className="container h-100">
-    <div className="row h-100 justify-content-center align-items-center">
-      <div className="col-md-5" id="login-mod">
-        <h2>Login</h2>
-        <button type="button" className="btn btn-danger btn-block" onClick={handleGoogleLogin}>
-          <span className="fa fa-google fa-fw"></span> 
-          Sign in with Google
-        </button>
-        <button type="button" className="btn btn-primary btn-block">
-          <span className="fa fa-facebook fa-fw"></span>
-          Sign in with Facebook
-        </button>
-      </div>
-    </div>
-  </div>
-);
