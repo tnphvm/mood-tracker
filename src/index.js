@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './css/index.css';
 import registerServiceWorker from './registerServiceWorker';
-import {Redirect, browserHistory, Route, Router} from "react-router";
+import { Redirect, browserHistory, Route, Router } from 'react-router';
 import LoginContainer from './container/LoginContainer';
 import App from './component/App';
 

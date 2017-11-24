@@ -2,59 +2,78 @@ import React, { Component } from 'react'
 import { loginWithGoogle } from "../helpers/auth";
 import { firebaseAuth } from "../config/firebaseConfig";
 import { Login } from '../component/Login'
+import { browserHistory } from 'react-router';
 
-const firebaseAuthKey = "firebaseAuthInProgress";
+// const firebaseAuthKey = "firebaseAuthInProgress";
 const appTokenKey = "appToken";
 
 export default class LoginContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      splashScreen: false
+      loaded: false
     };
 
     this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
+    this.authListener = this.authListener.bind(this);
   }
 
   handleGoogleLogin() {
     loginWithGoogle()
     .catch(function (error) {
-      alert(error);
-      localStorage.removeItem(firebaseAuthKey);
+      console.log(error);
+      this.setState({
+        loaded: true
+      });
     });
 
-    localStorage.setItem(firebaseAuthKey, "1");
+    this.setState({
+      loaded: false
+    });
   }
 
-  componentWillMount() {
-    if (localStorage.getItem(firebaseAuthKey) == '1')
-      localStorage.removeItem(firebaseAuthKey);
-    
-    // Check for token and redirect if one exists
-    if (localStorage.getItem(appTokenKey)) {
-      this.props.history.push('/app/home');
-      return;
-    }
-
-    firebaseAuth().onAuthStateChanged(user => {
+  authListener() {
+    this.firebaseListener = firebaseAuth().onAuthStateChanged(user => {
+      console.log("I'm called");
       if (user) {
         console.log("User signed in: ", JSON.stringify(user));
 
-        localStorage.removeItem(firebaseAuthKey);
         localStorage.setItem(appTokenKey, user.uid);
-
-        this.props.history.push('/app/home');
+        browserHistory.push('/app/home');
+      }
+      else {
+        this.setState({
+          loaded: true
+        });
       }
     });
   }
 
+  componentWillMount() {
+    console.log('Mounting');
+    
+    // Check if user has signed in before
+    if (localStorage.getItem(appTokenKey)) {
+      browserHistory.push('/app/home');
+      return;
+    }
+
+    this.authListener();
+  }
+
+  componentWillUnmount() {
+    this.handleGoogleLogin = undefined;
+    this.firebaseListener && this.firebaseListener();
+    this.authListener = undefined;
+  }
+
   render() {
-    console.log(firebaseAuthKey + " = " + localStorage.getItem(firebaseAuthKey));
-    if (localStorage.getItem(firebaseAuthKey) == '1')
+    console.log("Rendering");
+    if (!this.state.loaded)
       return (<SplashScreen />);
 
     return (<Login handleGoogleLogin={this.handleGoogleLogin} />);
   }
 }
 
-const SplashScreen = () => (<p>Loading...</p>);
+const SplashScreen = () => (<p style={{ textAlign: 'center' }}>Loading...</p>);

@@ -1,16 +1,40 @@
 import React, { Component } from 'react';
-// import Login from './login';
-// import { config } from './firebaseConfig';
-// import firebase from 'firebase';
+import { logout } from '../helpers/auth';
+import { browserHistory } from 'react-router';
 
-// var db = firebase.initializeApp(config);
+const appTokenKey = "appToken";
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    // this.state = {
+    //   user: JSON.parse(localStorage.getItem("firebaseUser"));
+    // };
+
+    // console.log("User: ", this.state.user);
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  handleLogout() {
+    logout().then(function () {
+      localStorage.removeItem(appTokenKey);
+      // this.props.history.push('/login');
+      browserHistory.push('/login');
+      console.log("User signed out from firebase.");
+    });
+  }
+
   render() {
-    return (
-      <div>
-        <p>Welcome!</p>
-      </div>
-    );
+    return <Home handleLogout={this.handleLogout}/>;
   }
 }
+
+const Home = ({handleLogout}) => (
+  <div className="container">
+    <p style={{ textAlign: 'center' }}>Welcome!</p>
+    <button type="button" className="btn btn-primary btn-block"
+      onClick={handleLogout}>
+    Sign Out
+    </button>
+  </div>
+);
