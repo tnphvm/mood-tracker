@@ -2,9 +2,14 @@
    display: block;
    margin-left: auto;
    margin-right: auto;
-   width: 70%;
+   width: 50%;
    padding: 10px;
    border-radius: 50%;
+}
+
+.dropdown-menu {
+   max-width: 250px;
+   padding-bottom: 0;
 }
 
 .btn-amazing {

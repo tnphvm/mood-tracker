@@ -27,9 +27,7 @@ export default class HomeContainer extends Component {
 
   changeCellColor = e => {
     let currMood = this.state.currMood;
-    console.log(e.target.getAttribute("bgcolor"));
     e.target.setAttribute("bgcolor", currMood);
-    // alert(e.target);
   };
 
   verifyUser = () => {
@@ -68,21 +66,51 @@ export default class HomeContainer extends Component {
   };
 
   componentWillUnmount() {
-    this.handleLogout = undefined;
     this.firebaseRef.off();
   }
 
   render() {
     if (!this.state.loaded) return <SplashScreen />;
 
-    console.log(this.state.user);
     return (
-      <Home
-        updateMood={this.updateCurrentMood}
-        handleLogout={this.handleLogout}
-        user={this.state.user}
-        colorHandler={this.changeCellColor}
-      />
+      <div>
+        <div className="dropdown">
+          <button
+            className="btn dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+          >
+            <span className="fa fa-user" />
+          </button>
+          <div class="dropdown-menu">
+            <h3 style={{ textAlign: "center" }}>
+              {this.state.user.displayName}
+            </h3>
+            <img
+              src={this.state.user.avatar}
+              alt={this.state.user.displayName}
+              id="prof-pic"
+            />
+            <button
+              type="button"
+              className="btn btn-danger btn-block"
+              style={{ borderRadius: 0 }}
+              onClick={this.handleLogout}
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+        <div className="container h-100">
+          <Home
+            state={this}
+            updateMood={this.updateCurrentMood}
+            handleLogout={this.handleLogout}
+            user={this.state.user}
+            colorHandler={this.changeCellColor}
+          />
+        </div>
+      </div>
     );
   }
 }

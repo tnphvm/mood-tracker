@@ -1,7 +1,13 @@
 import React from "react";
 import "../css/home.css";
 
-export const Home = ({ handleLogout, user, colorHandler, updateMood }) => {
+export const Home = ({
+   handleLogout,
+   user,
+   colorHandler,
+   updateMood,
+   state
+}) => {
    const months = [
       "Jan",
       "Feb",
@@ -43,34 +49,56 @@ export const Home = ({ handleLogout, user, colorHandler, updateMood }) => {
       );
    }
 
+   let borderColor = "";
+   if (state.state.currMood)
+      borderColor = "solid 10px #" + state.state.currMood;
+
+   const colorPreview = {
+      display: "inline-block",
+      border: borderColor,
+      width: 10,
+      height: 10
+   };
+
    return (
       <div className="row">
          <div className="col-md-4">
-            <h2 style={{ textAlign: "center" }}>{user.displayName}</h2>
-            <img src={user.avatar} alt={user.displayName} id="prof-pic" />
-            <button
-               type="button"
-               className="btn btn-primary btn-block"
-               onClick={handleLogout}
-            >
-               Sign Out
-            </button>
+            <b>Mood Selected: </b>
+            <div style={colorPreview} />
             <div className="text-center">
                <div className="btn-group-vertical">
                   <button
                      type="button"
                      className="btn btn-amazing"
-                     onClick={updateMood("fff")}
+                     onClick={updateMood("ffea63")}
                   >
-                     Amazing!
+                     Happy/Amazing
                   </button>
-                  <button type="button" className="btn btn-average">
+                  <button
+                     type="button"
+                     className="btn btn-average"
+                     onClick={updateMood("44b539")}
+                  >
                      Normal/Average
                   </button>
-                  <button type="button" className="btn btn-sad">
+                  <button
+                     type="button"
+                     className="btn btn-sad"
+                     onClick={updateMood("3866b5")}
+                  >
                      Depressed/Sad
                   </button>
-                  <button type="button" className="btn btn-light">
+                  <button type="button" className="btn btn-secondary">
+                     Stressed/Anxious
+                  </button>
+                  <button type="button" className="btn btn-secondary">
+                     Angry/Frustrated
+                  </button>
+                  <button
+                     type="button"
+                     className="btn btn-light"
+                     onClick={updateMood("")}
+                  >
                      Clear
                   </button>
                </div>
