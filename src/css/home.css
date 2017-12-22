@@ -6,3 +6,15 @@
    padding: 10px;
    border-radius: 50%;
 }
+
+.btn-amazing {
+   background-color: #ffea63;
+}
+
+.btn-average {
+   background-color: #44b539;
+}
+
+.btn-sad {
+   background-color: #3866b5;
+}

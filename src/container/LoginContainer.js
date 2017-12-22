@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { loginWithGoogle } from "../helpers/auth";
-import { firebaseAuth } from "../config/firebaseConfig";
+import { loginWithGoogle, loginWithFb } from "../helpers/auth";
+import { firebaseAuth, database } from '../config/firebaseConfig';
 import { Login } from '../component/Login'
 import { browserHistory } from 'react-router';
 
-// const firebaseAuthKey = "firebaseAuthInProgress";
 const appTokenKey = "appToken";
 
 export default class LoginContainer extends Component {
@@ -14,21 +13,49 @@ export default class LoginContainer extends Component {
       loaded: false
     };
 
-    this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
+    this.firebaseRef = database.ref('users');
+    this.handleLogin = this.handleLogin.bind(this);
     this.authListener = this.authListener.bind(this);
   }
 
-  handleGoogleLogin() {
-    loginWithGoogle()
-    .catch(function (error) {
-      console.log(error);
-      this.setState({
-        loaded: true
+  handleLogin(e) {
+    let provider = e.target.id;
+
+    if (provider === 'googleBtn')  {
+      loginWithGoogle()
+      .catch(function (error) {
+        console.log(error);
+        this.setState({
+          loaded: true
+        });
       });
-    });
+    }
+    else if (provider === 'fbBtn') {
+      loginWithFb()
+      .catch(function (error) {
+        console.log(error);
+        this.setState({
+          loaded: true
+        });
+      });
+    }
 
     this.setState({
       loaded: false
+    });
+  }
+
+  addUser(user) {
+    let photoURL = user.photoURL;
+    if (user.providerData[0].providerId === 'facebook.com')
+      photoURL = "https://graph.facebook.com/" + user.providerData[0].uid
+        + "/picture?height=500";
+
+    this.firebaseRef.child(user.uid).set({
+      displayName: user.displayName,
+      email: user.email,
+      avatar: photoURL,
+      verified: user.emailVerified
     });
   }
 
@@ -39,6 +66,7 @@ export default class LoginContainer extends Component {
         console.log("User signed in: ", JSON.stringify(user));
 
         localStorage.setItem(appTokenKey, user.uid);
+        this.addUser(user);
         browserHistory.push('/app/home');
       }
       else {
@@ -65,6 +93,7 @@ export default class LoginContainer extends Component {
     this.handleGoogleLogin = undefined;
     this.firebaseListener && this.firebaseListener();
     this.authListener = undefined;
+    this.firebaseRef.off();
   }
 
   render() {
@@ -72,7 +101,7 @@ export default class LoginContainer extends Component {
     if (!this.state.loaded)
       return (<SplashScreen />);
 
-    return (<Login handleGoogleLogin={this.handleGoogleLogin} />);
+    return (<Login handleLogin={this.handleLogin} />);
   }
 }
 
