@@ -14,11 +14,11 @@ export default class LoginContainer extends Component {
     };
 
     this.firebaseRef = database.ref('users');
-    this.handleLogin = this.handleLogin.bind(this);
-    this.authListener = this.authListener.bind(this);
+    // this.handleLogin = this.handleLogin.bind(this);
+    // this.authListener = this.authListener.bind(this);
   }
 
-  handleLogin(e) {
+  handleLogin = (e) => {
     let provider = e.target.id;
 
     if (provider === 'googleBtn')  {
@@ -45,7 +45,7 @@ export default class LoginContainer extends Component {
     });
   }
 
-  addUser(user) {
+  addUser = (user) => {
     let photoURL = user.photoURL;
     if (user.providerData[0].providerId === 'facebook.com')
       photoURL = "https://graph.facebook.com/" + user.providerData[0].uid
@@ -54,12 +54,11 @@ export default class LoginContainer extends Component {
     this.firebaseRef.child(user.uid).set({
       displayName: user.displayName,
       email: user.email,
-      avatar: photoURL,
-      verified: user.emailVerified
+      avatar: photoURL
     });
   }
 
-  authListener() {
+  authListener = () => {
     this.firebaseListener = firebaseAuth().onAuthStateChanged(user => {
       console.log("I'm called");
       if (user) {

@@ -27,18 +27,59 @@ export default class HomeContainer extends Component {
 
   changeCellColor = e => {
     let currMood = this.state.currMood;
+    let date = e.target.getAttribute("id");
+
     e.target.setAttribute("bgcolor", currMood);
+    this.saveChanges(date, currMood);
+  };
+
+  getMonth(monthNum) {
+    if (monthNum < 1 || monthNum > 12) return -1;
+
+    let months = {
+      "1": "Jan",
+      "2": "Feb",
+      "3": "Mar",
+      "4": "Apr",
+      "5": "May",
+      "6": "Jun",
+      "7": "Jul",
+      "8": "Aug",
+      "9": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    };
+
+    return months[monthNum];
+  }
+
+  saveChanges = (date, cellColor) => {
+    let currDate = date.split("-");
+    let month = currDate[0];
+    let day = currDate[1];
+
+    if (!cellColor) cellColor = null;
+    month = this.getMonth(month);
+    if (month === -1) return;
+
+    this.firebaseRef = database.ref("coloredDates");
+    this.firebaseRef.child(month + "-" + this.state.user.uid).update({
+      [day]: cellColor
+    });
   };
 
   verifyUser = () => {
-    this.firebaseRef = database.ref(
-      "users/" + localStorage.getItem(appTokenKey)
-    );
-    this.firebaseRef.on(
+    let key = localStorage.getItem(appTokenKey);
+    this.firebaseRef = database.ref("users/" + key);
+
+    this.firebaseRef.once(
       "value",
       dataSnapshot => {
         if (dataSnapshot.val()) {
           let userObj = dataSnapshot.val();
+          userObj["uid"] = key;
+
           this.setState({
             user: userObj,
             loaded: true
@@ -72,17 +113,19 @@ export default class HomeContainer extends Component {
   render() {
     if (!this.state.loaded) return <SplashScreen />;
 
+    console.log(this.state.user.uid);
+
     return (
       <div>
         <div className="dropdown">
           <button
-            className="btn dropdown-toggle"
+            className="btn dropdown-toggle btn-prof"
             type="button"
             data-toggle="dropdown"
           >
             <span className="fa fa-user" />
           </button>
-          <div class="dropdown-menu">
+          <div className="dropdown-menu">
             <h3 style={{ textAlign: "center" }}>
               {this.state.user.displayName}
             </h3>
@@ -105,7 +148,6 @@ export default class HomeContainer extends Component {
           <Home
             state={this}
             updateMood={this.updateCurrentMood}
-            handleLogout={this.handleLogout}
             user={this.state.user}
             colorHandler={this.changeCellColor}
           />

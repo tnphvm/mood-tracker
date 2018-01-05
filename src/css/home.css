@@ -7,19 +7,41 @@
    border-radius: 50%;
 }
 
+.btn-prof {
+   margin: 5px;
+}
+
 .dropdown-menu {
    max-width: 250px;
    padding-bottom: 0;
 }
 
+.mood-header {
+   margin-bottom: 25px;
+}
+
+#mood {
+   font-weight: bold;
+   font-size: 14pt;
+   text-align: center;
+}
+
 .btn-amazing {
-   background-color: #ffea63;
+   background-color: #f9ea84;
 }
 
 .btn-average {
-   background-color: #44b539;
+   background-color: #5daf56;
 }
 
 .btn-sad {
-   background-color: #3866b5;
+   background-color: #4d76bc;
+}
+
+.btn-stressed {
+   background-color: #e8923c;
+}
+
+.btn-angry {
+   background-color: #b23131;
 }
